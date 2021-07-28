@@ -14,7 +14,7 @@ except ImportError:
     UInt8 = uint8
 
 rate = 8000
-eqlog=open("eqlog.txt","a")
+eqlog=open("eqlog.txt","ab")
 current_formula = None
 t = 0
 interval = 33
@@ -29,7 +29,7 @@ def eval_formula(error, formula):
     granularity = 1024
     if needed % granularity != 0:
         needed += granularity - needed % granularity
-    print time.time() - last_time, needed
+    print(time.time() - last_time, needed)
 
     try:
         new_formula = shuntparse.parse(shuntparse.tokenize(formula.text))
@@ -39,7 +39,7 @@ def eval_formula(error, formula):
         error.text=repr(exc)
     else:
         if str(current_formula) != str(new_formula):
-            eqlog.write("%s %s" % ( int(time.time() * 10000), formula.text+"\n"))
+            eqlog.write(("%s %s" % ( int(time.time() * 10000), formula.text+"\n")).encode())
             eqlog.flush()
         current_formula = new_formula
         error.text=''
@@ -77,13 +77,13 @@ def run_mainloop(error, formula, outfd, screen):
         # hacky kludge to keep us from getting too far behind if for some
         # reason the audio output isn’t draining fast enough
         if last_time - outstart > interval * 0.1:
-            print "buffer overrun of %f" % (last_time - outstart)
+            print("buffer overrun of %f" % (last_time - outstart))
             start += (last_time - outstart) / 2
 
         if len(output) > 1:
             pygame.draw.rect(screen, (0,0,0), (0, 0, screen.get_width(), 256))
             pygame.draw.lines(screen, (255, 255, 255), False,
-                              list(enumerate(map(ord, output[:screen.get_width()]))))
+                              list(enumerate(output[:screen.get_width()])))
         pygame.display.flip()
         pygame.time.delay(interval)
 
@@ -102,7 +102,7 @@ def open_new_outfile():
     while True:
         filename = 'bytebeat_%d.raw' % i
         if not os.path.exists(filename):
-            return open(filename, 'w')
+            return open(filename, 'wb')
         i += 1
 
 class pa_fd(object):
@@ -117,7 +117,7 @@ class pa_fd(object):
 def make_window():
     try:
         outfd = open('/dev/dsp', 'w')
-    except IOError, e:
+    except IOError as e:
         if e.errno != errno.EACCES:
             raise
         try:
@@ -129,7 +129,7 @@ def make_window():
             # most Linuxes of recent vintage.  Try invoking ALSA's aplay
             # command instead, or PulseAudio's pacat
             #outfd = os.popen('aplay -f U8', 'w')
-            cmd = 'aplay || pacat --format=u8 --rate={rate} --channels=1'.format(rate=rate)
+            cmd = 'pacat --format=u8 --rate={rate} --channels=1'.format(rate=rate)
             outfd = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, bufsize=0).stdin
         
     outfile2 = open_new_outfile()

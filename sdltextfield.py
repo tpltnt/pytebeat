@@ -171,4 +171,4 @@ if __name__ == '__main__':
             field.draw(screen)
             pygame.display.flip()
         else:
-            print event
+            print(event)

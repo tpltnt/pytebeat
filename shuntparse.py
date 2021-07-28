@@ -289,9 +289,9 @@ def ps(astr):
     "Parse string, for interactive testing."
     try:
         return parse(tokenize(astr))
-    except ParseError, e:
+    except ParseError as e:
         traceback.print_exc()
-        print e.__class__, repr(e.args[0])
+        print(e.__class__, repr(e.args[0]))
 
 def roundtrip(astr):
     return str(ps(astr))
@@ -303,8 +303,8 @@ def play_bytebeat(astr, out):
     if formula is None:
         return
     if out is not sys.stdout:
-        print formula
-        print formula.rpn()
+        print(formula)
+        print(formula.rpn())
 
     while True:
         x = formula.eval({'t': arange(t, t+n_samples)})
