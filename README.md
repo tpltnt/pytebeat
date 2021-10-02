@@ -28,13 +28,24 @@ or
 My netbook is running a pretty obsolete version of Linux, so this uses
 the obsolete interface
 `/dev/dsp`, the OSS device interface that can be implemented by the
-  `aoss` command from the alsa-oss package.
+  `aoss` command from the alsa-oss package or the `padsp` command from PulseAudio.
+
+On a modern GNU/Linux system, you probably want to run this with the command
+`padsp python3 pytebeat.py`, which will make the `/dev/dsp` device available.
+Alternately, if `/dev/dsp` is not found (eg, because you are not running under
+`padsp`), pytebeat will fall back to using the `pyaudio` library. On some
+systems, this produces choppy output, however, so `padsp` is preferable.
+Lastly, if both `/dev/dsp` and the `pyaudio` library are unavailble, it will
+open a pipe to a `pacat` process. This works, and could be replaced with
+various other commands on other operating systems, but adds a large amount of
+latency.
 
 It also uses PyGame, the Python interface to SDL.
 
-I haven’t figured out how to call Core Audio from Python on MacOS X
-yet.  (I figure it’s probably possible with PyObjC, but OS X doesn’t
-ship with PyGame or SDL anyway.)
+I haven’t figured out how to call Core Audio from Python on MacOS X yet. (I
+figure it’s probably possible with PyObjC, but OS X doesn’t ship with PyGame or
+SDL anyway.) It might work via the pyaudio library now; please update this
+README if you find that it does.
 
 How to use it
 -------------

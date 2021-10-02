@@ -116,14 +116,14 @@ class pa_fd(object):
 
 def make_window():
     try:
-        outfd = open('/dev/dsp', 'w')
+        outfd = open('/dev/dsp', 'wb')
     except IOError as e:
         if e.errno != errno.EACCES:
             raise
         try:
             # try PyAudio
             import pyaudio
-            outfd = pa_fd(pyaudio.PyAudio().open(rate, 1, pyaudio.pa.paInt8, output=True, frames_per_buffer=512))
+            outfd = pa_fd(pyaudio.PyAudio().open(rate, 1, pyaudio.pa.paInt8, output=True, frames_per_buffer=1))
         except ImportError:
             # Probably we are on a system without Open Sound System, like
             # most Linuxes of recent vintage.  Try invoking ALSA's aplay
